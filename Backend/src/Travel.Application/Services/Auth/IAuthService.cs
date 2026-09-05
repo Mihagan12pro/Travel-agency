@@ -2,7 +2,7 @@ namespace Travel.Application.Services.Auth;
 
 public interface IAuthService
 {
-    Task<bool> LoginAsync(
+    Task<int> LoginAsync(
         LoginDto login,
         CancellationToken token);
 
@@ -17,4 +17,6 @@ public interface IAuthService
     Task<int> GetRegisterResultAsync(
         int id, 
         CancellationToken token); 
+
+    Task<IEnumerable<PendingRegister>> GetRegisters(CancellationToken token);
 }
