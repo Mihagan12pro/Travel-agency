@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Asp.Versioning.Mvc" Version="10.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Travel.Application\Travel.Application.csproj" />
+    <ProjectReference Include="..\Travel.DataAccess\Travel.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

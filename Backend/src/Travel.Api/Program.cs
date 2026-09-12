@@ -1,15 +1,18 @@
-using Microsoft.AspNetCore.Mvc;
 using Travel.Application.Services.Auth;
 using Travel.Application;
+using Travel.DataAccess;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+string? connectionString = Environment.GetEnvironmentVariable("TravelDb");
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplicationServices();
-string? connectionString = builder.Configuration["TravelDb"];
+builder.Services.AddDbServices(connectionString);
 
 
 var app = builder.Build();
@@ -32,5 +35,7 @@ app.MapPost("/auth/register", async (
 
     return Results.Accepted($"{request.Scheme}://{request.Host}{request.Path}");
 });
+
+await app.Services.ApplyMigrations();
 
 app.Run();

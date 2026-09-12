@@ -2,7 +2,7 @@
 
 namespace Travel.Model;
 
-public class Employee
+public class User
 {
     public int Id { get; set; }
 
