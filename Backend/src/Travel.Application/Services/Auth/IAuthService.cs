@@ -6,17 +6,8 @@ public interface IAuthService
         LoginDto login,
         CancellationToken token);
 
-    Task<int> TryRigisterAsync(
-        RegisterDto register,
-        CancellationToken token);
 
-    Task ProcessRegisterAsync(
-        int id, 
+    Task<int> SignUpAsync(
+        SignUpDto register, 
         CancellationToken token);
-    
-    Task<int> GetRegisterResultAsync(
-        int id, 
-        CancellationToken token); 
-
-    Task<IEnumerable<PendingRegister>> GetRegisters(CancellationToken token);
 }

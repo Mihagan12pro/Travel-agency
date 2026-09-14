@@ -1,7 +1,9 @@
-using Travel.Application.Services.Auth;
-using Travel.Application;
-using Travel.DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Travel.Application;
+using Travel.Application.DTOs.Employee;
+using Travel.Application.Services.Admin;
+using Travel.Application.Services.Auth;
+using Travel.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,14 +28,19 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapPost("/auth/register", async (
-    [FromBody] RegisterDto register,
+    [FromBody] SignUpDto register,
     [FromServices] IAuthService service, 
     HttpRequest request,
     CancellationToken token) =>
 {
-    int id = await service.TryRigisterAsync(register, token);
+    //int id = await service.TryRigisterAsync(register, token);
 
     return Results.Accepted($"{request.Scheme}://{request.Host}{request.Path}");
+});
+
+app.MapPost("/admin/employees/add", async (ICAOEmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) => 
+{
+    await service.AddEmployeeAsync(data, token);
 });
 
 await app.Services.ApplyMigrations();

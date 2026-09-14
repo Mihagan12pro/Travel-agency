@@ -1,6 +1,6 @@
 using Travel.Model.Enums;
 
-public record RegisterDto(
+public record SignUpDto(
     string Login,
     string Password,
     EmployeeRoles Role);
