@@ -13,6 +13,9 @@ string? connectionString = Environment.GetEnvironmentVariable("TravelDb");
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddValidation();
+
 builder.Services.AddApplicationServices();
 builder.Services.AddDbServices(connectionString);
 
@@ -23,6 +26,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 }
 
 app.UseHttpsRedirection();
