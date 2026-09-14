@@ -40,9 +40,22 @@ app.MapPost("/auth/register", async (
     HttpRequest request,
     CancellationToken token) =>
 {
-    //int id = await service.TryRigisterAsync(register, token);
+    var result = await service.SignUpAsync(register, token);
 
-    return Results.Accepted($"{request.Scheme}://{request.Host}{request.Path}");
+    switch(result.Value)
+    {
+        case 200:
+            return Results.Ok();
+
+        case 404:
+            return Results.NotFound(result.ErrorMessage);
+
+        case 409:
+            return Results.Conflict(result.ErrorMessage);
+
+        default:
+            return Results.InternalServerError(result.ErrorMessage);
+    }
 });
 
 app.MapPost("/admin/employees/add", async (ICAOEmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) => 

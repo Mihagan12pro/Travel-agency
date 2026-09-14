@@ -1,6 +1,6 @@
-using Travel.Application.Services.Auth;
+using Travel.Model;
 
 public interface IAuthRepository
 {
-    //Task<int> AddPendingRegisterAsync(string Login, string HashedPassword, CancellationToken cancellation);
+    Task<Result<int>> SignUpAsync(SignUpDto signUp, CancellationToken token);
 }

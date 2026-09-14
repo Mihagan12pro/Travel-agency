@@ -22,6 +22,10 @@ public class AppDbContext : DbContext
             .WithOne()
             .HasForeignKey<User>(u => u.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<User>()
+           .HasIndex(u => u.Login)
+           .IsUnique();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

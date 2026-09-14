@@ -7,7 +7,6 @@ namespace Travel.Model
     {
         public int Id { get; set; }
 
-
         public required string HashedPassport { get; set; }
 
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Travel.Application.Services.Admin;
+using Travel.DataAccess.Repositories;
 
 namespace Travel.DataAccess
 {
@@ -21,7 +23,10 @@ namespace Travel.DataAccess
                     npgsql.MigrationsAssembly(assemblyName);
                 });
             });
-            
+
+            services.AddScoped<IEmployeesRepository, EmployeesRepositoryV1>();
+            services.AddScoped<IAuthRepository, AuthRepositoryV1>();
+
             return services;
         }
 

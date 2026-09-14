@@ -1,3 +1,5 @@
+using Travel.Model;
+
 namespace Travel.Application.Services.Auth;
 
 public interface IAuthService
@@ -7,7 +9,7 @@ public interface IAuthService
         CancellationToken token);
 
 
-    Task<int> SignUpAsync(
+    Task<Result<int>> SignUpAsync(
         SignUpDto register, 
         CancellationToken token);
 }
