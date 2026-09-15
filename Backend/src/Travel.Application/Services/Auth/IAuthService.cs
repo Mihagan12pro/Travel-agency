@@ -4,7 +4,7 @@ namespace Travel.Application.Services.Auth;
 
 public interface IAuthService
 {
-    Task<int> LoginAsync(
+    Task<Result<string>> LoginAsync(
         LoginDto login,
         CancellationToken token);
 

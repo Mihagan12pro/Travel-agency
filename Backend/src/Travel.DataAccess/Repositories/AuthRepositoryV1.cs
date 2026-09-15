@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Travel.Application.DTOs.Auth;
 using Travel.Model;
 
 namespace Travel.DataAccess.Repositories
@@ -50,6 +51,19 @@ namespace Travel.DataAccess.Repositories
             return result;
         }
 
+        public async Task<Result<GetUserDto>> GetUserAsync(LoginDto login, CancellationToken token)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u =>
+                u.Login == login.Login && 
+                u.HashedPassword == login.Password,
+                token
+            );
+
+            if (user == null)
+                return new Result<GetUserDto>(false, null);
+
+            return new Result<GetUserDto>(true, new GetUserDto(user.Id, user.Login, user.Role));
+        }
 
         public AuthRepositoryV1(AppDbContext dbContext)
         {

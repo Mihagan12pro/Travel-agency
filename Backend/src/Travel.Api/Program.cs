@@ -1,16 +1,20 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using System.Text;
+using System.Text.Json;
 using Travel.Application;
 using Travel.Application.DTOs.Employee;
 using Travel.Application.Services.Admin;
 using Travel.Application.Services.Auth;
+using Travel.Application.Services.Security;
 using Travel.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = Environment.GetEnvironmentVariable("TravelDb");
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -19,18 +23,75 @@ builder.Services.AddValidation();
 builder.Services.AddApplicationServices();
 builder.Services.AddDbServices(connectionString);
 
+builder.Services.AddSwaggerGen(options =>
+{
+    var binDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+    var files = binDirectory.GetFiles("*.xml");
+
+    foreach (var file in files)
+    {
+        options.IncludeXmlComments(file.FullName);
+    }
+
+    options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("bearer", document)] = []
+    });
+});
+
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(options =>
+ {
+     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+ })
+ .AddJwtBearer(options =>
+  {
+      var jwtVariable = Environment.GetEnvironmentVariable("TravelJwt");
+      JwtToken jwtToken = JsonSerializer.Deserialize<JwtToken>(jwtVariable);
+
+      options.MapInboundClaims = false;
+
+      options.TokenValidationParameters = new TokenValidationParameters
+      {
+          ClockSkew = TimeSpan.Zero,
+
+          ValidateLifetime = true,
+
+          ValidateIssuer = true,
+
+          ValidIssuer = jwtToken.Issuer,
+
+          ValidateIssuerSigningKey = true,
+          IssuerSigningKey = new SymmetricSecurityKey(jwtToken.IssuerSigningKey),
+
+          RoleClaimType = "role",
+
+          ValidAudiences = jwtToken.Audiences
+      };
+  });
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/openapi/v1.json", "v1");
-    });
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseAuthentication(); 
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
@@ -58,10 +119,25 @@ app.MapPost("/auth/register", async (
     }
 });
 
-app.MapPost("/admin/employees/add", async (ICAOEmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) => 
+
+app.MapPost("/auth/login", async (
+    [FromBody] LoginDto login,
+    [FromServices] IAuthService service,
+    HttpRequest request,
+    CancellationToken token) =>
+{
+    var result = await service.LoginAsync(login, token);
+
+    if (result.IsSuccess)
+        return Results.Ok(result.Value);
+
+    return Results.NotFound();
+});
+
+app.MapPost("/admin/employees/add", async (ICAOEmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) =>
 {
     await service.AddEmployeeAsync(data, token);
-});
+}).RequireAuthorization(policy => policy.RequireRole("Admin")); 
 
 await app.Services.ApplyMigrations();
 
