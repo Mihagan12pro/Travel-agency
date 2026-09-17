@@ -1,16 +1,20 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Xml.Linq;
 using Travel.Application.DTOs.Security;
 
 namespace Travel.Application.Services.Security
 {
-    public class SecurityServiceV1 : ISecurityService
+    public class SecurityService : ISecurityService
     {
+        private readonly IHttpContextAccessor _httpContext;
+
         public string CreateJwt(CreateTokenDto createTokenDto)
         {
             var jwtVariable = Environment.GetEnvironmentVariable("TravelJwt");
@@ -57,6 +61,14 @@ namespace Travel.Application.Services.Security
             byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(str));
 
             return Convert.ToHexString(hash);
+        }
+
+        public string JwtClaimExtractor(string claimName)
+            => _httpContext.HttpContext.User.FindFirst(claimName).Value;
+
+        public SecurityService(IHttpContextAccessor httpContext)
+        {
+            _httpContext = httpContext;
         }
     }
 }

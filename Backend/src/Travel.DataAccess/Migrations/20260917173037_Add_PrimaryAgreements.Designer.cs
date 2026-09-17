@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Travel.DataAccess;
@@ -11,9 +12,11 @@ using Travel.DataAccess;
 namespace Travel.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260917173037_Add_PrimaryAgreements")]
+    partial class Add_PrimaryAgreements
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace Travel.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Travel.Model.ClientBTC", b =>
+            modelBuilder.Entity("Travel.Model.Client", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,14 +37,16 @@ namespace Travel.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("HashedPassport")
+                    b.Property<string>("LegalId")
                         .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("Passport");
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("BTCClients");
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Travel.Model.Contracts.Contract", b =>
@@ -88,12 +93,15 @@ namespace Travel.DataAccess.Migrations
                     b.Property<long>("ClientId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsArchieved")
-                        .HasColumnType("boolean");
+                    b.Property<DateTime>("EndDateTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("StaffUserId")
                         .HasColumnType("integer");
@@ -124,6 +132,7 @@ namespace Travel.DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Patronymic")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Role")
@@ -188,7 +197,7 @@ namespace Travel.DataAccess.Migrations
 
             modelBuilder.Entity("Travel.Model.Contracts.PrimaryAgreement", b =>
                 {
-                    b.HasOne("Travel.Model.ClientBTC", null)
+                    b.HasOne("Travel.Model.Client", null)
                         .WithMany()
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)

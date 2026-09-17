@@ -3,7 +3,7 @@ using Travel.Model.Enums;
 
 namespace Travel.Application.DTOs.Employee
 {
-    public record ICAOEmployeeDataDto(
+    public record EmployeeDataDto(
         [Required, MinLength(3)] string Name, 
         [Required, MinLength(3)] string Surname, 
         [MinLength(5)] string? Patronymic,

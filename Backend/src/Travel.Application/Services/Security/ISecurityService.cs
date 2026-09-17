@@ -7,5 +7,7 @@ namespace Travel.Application.Services.Security
         string HashSha256(string str);
 
         string CreateJwt(CreateTokenDto createTokenDto);
+
+        string JwtClaimExtractor(string claimName);
     }
 }

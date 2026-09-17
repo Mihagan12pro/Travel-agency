@@ -5,5 +5,5 @@ public interface IAuthRepository
 {
     Task<Result<int>> SignUpAsync(SignUpDto signUp, CancellationToken token);
 
-    Task<Result<GetUserDto>> GetUserAsync(LoginDto login, CancellationToken token);
+    Task<Result<GetUserDto>> LoginAsync(LoginDto login, CancellationToken token);
 }

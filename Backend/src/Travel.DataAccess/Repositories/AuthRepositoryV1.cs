@@ -2,6 +2,7 @@
 using Npgsql;
 using Travel.Application.DTOs.Auth;
 using Travel.Model;
+using Travel.Model.Staff;
 
 namespace Travel.DataAccess.Repositories
 {
@@ -17,7 +18,7 @@ namespace Travel.DataAccess.Repositories
             {
                 Employee employee = await _dbContext.Employees.FirstAsync(e => e.HashedPassport == signUp.Passport, token);
 
-                User user = new User()
+                StaffUser user = new StaffUser()
                 {
                     EmployeeId = employee.Id,
 
@@ -51,7 +52,7 @@ namespace Travel.DataAccess.Repositories
             return result;
         }
 
-        public async Task<Result<GetUserDto>> GetUserAsync(LoginDto login, CancellationToken token)
+        public async Task<Result<GetUserDto>> LoginAsync(LoginDto login, CancellationToken token)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u =>
                 u.Login == login.Login && 

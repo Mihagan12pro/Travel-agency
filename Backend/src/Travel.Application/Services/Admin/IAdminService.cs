@@ -4,6 +4,6 @@ namespace Travel.Application.Services.Admin
 {
     public interface IAdminService
     {
-        Task AddEmployeeAsync(ICAOEmployeeDataDto employeeData, CancellationToken token);
+        Task AddEmployeeAsync(EmployeeDataDto employeeData, CancellationToken token);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Travel.Application.Services.Admin;
-using Travel.Model;
+using Travel.Model.Staff;
 
 namespace Travel.DataAccess.Repositories
 {

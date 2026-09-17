@@ -16,7 +16,7 @@ internal class AuthService : IAuthService
             Password = _securityService.HashSha256(login.Password)
         };
 
-        var result = await _authRepository.GetUserAsync(login, token);
+        var result = await _authRepository.LoginAsync(login, token);
 
         if (!result.IsSuccess)
             return new Result<string>(false, null);

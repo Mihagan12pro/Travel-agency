@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Travel.Model.Enums;
 
-namespace Travel.Model;
+namespace Travel.Model.Staff;
 
-public class User
+public class StaffUser
 {
     [Key]
     public int Id { get; set; }

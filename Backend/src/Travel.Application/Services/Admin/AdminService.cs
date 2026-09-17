@@ -1,7 +1,7 @@
 ﻿using Travel.Application.DTOs.Employee;
 using Travel.Application.Extensions;
 using Travel.Application.Services.Security;
-using Travel.Model;
+using Travel.Model.Staff;
 
 namespace Travel.Application.Services.Admin
 {
@@ -10,7 +10,7 @@ namespace Travel.Application.Services.Admin
         private readonly IEmployeesRepository _employeesRepository;
         private readonly ISecurityService _security; 
 
-        public async Task AddEmployeeAsync(ICAOEmployeeDataDto employeeData, CancellationToken token)
+        public async Task AddEmployeeAsync(EmployeeDataDto employeeData, CancellationToken token)
         {
             string hashedPassport = _security.HashSha256(employeeData.Passport);
 

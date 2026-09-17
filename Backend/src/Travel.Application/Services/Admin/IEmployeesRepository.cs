@@ -1,4 +1,4 @@
-﻿using Travel.Model;
+﻿using Travel.Model.Staff;
 
 namespace Travel.Application.Services.Admin
 {

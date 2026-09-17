@@ -2,6 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Travel.Application.Services.Admin;
+using Travel.Application.Services.Clients;
+using Travel.Application.Services.Tours.PrimaryAggreements;
+using Travel.Application.Services.Users;
 using Travel.DataAccess.Repositories;
 
 namespace Travel.DataAccess
@@ -26,6 +29,10 @@ namespace Travel.DataAccess
 
             services.AddScoped<IEmployeesRepository, EmployeesRepositoryV1>();
             services.AddScoped<IAuthRepository, AuthRepositoryV1>();
+            services.AddScoped<IPrimaryAggreementsRepository, PrimaryAggreementsRepositoryV1>();
+            
+            services.AddScoped<IUsersRepository, UsersRepositoryV1>();
+            services.AddScoped<IClientsRepository, ClientsRepositoryV1>();
 
             return services;
         }

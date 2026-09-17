@@ -6,9 +6,11 @@ using System.Text;
 using System.Text.Json;
 using Travel.Application;
 using Travel.Application.DTOs.Employee;
+using Travel.Application.DTOs.Tours.Aggreement.BTC;
 using Travel.Application.Services.Admin;
 using Travel.Application.Services.Auth;
 using Travel.Application.Services.Security;
+using Travel.Application.Services.Tours.PrimaryAggreements;
 using Travel.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,8 @@ builder.Services.AddValidation();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddDbServices(connectionString);
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -134,10 +138,36 @@ app.MapPost("/auth/login", async (
     return Results.NotFound();
 });
 
-app.MapPost("/admin/employees/add", async (ICAOEmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) =>
+app.MapPost("/admin/employees/add", async (EmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) =>
 {
+
     await service.AddEmployeeAsync(data, token);
-}).RequireAuthorization(policy => policy.RequireRole("Admin")); 
+
+}).RequireAuthorization(policy => policy.RequireRole("Admin"));
+
+app.MapPost("staff/tours/btc/aggreements", async (CreateBTCAggrementDto data, [FromServices] IPrimaryAggreementsService service, CancellationToken token) =>
+{
+    var result = await service.CreateBTCAsync(data, token);
+
+    return Results.Ok(result);
+}).RequireAuthorization(policy => policy.RequireRole("Manager", "Agent"));
+
+app.MapGet("staff/tours/btc/aggreements/all", async ([FromServices] IPrimaryAggreementsService service, CancellationToken token) =>
+{
+    var result = await service.GetAllBTCAsync(token);
+
+    return Results.Ok(result);
+}).RequireAuthorization(policy => policy.RequireRole("Manager"));
+
+app.MapGet("staff/tours/btc/aggreements/{id}", async ([FromServices] IPrimaryAggreementsService service, long id, CancellationToken token) =>
+{
+    var result = await service.GetBTCAsync(id, token);
+
+    if (!result.IsSuccess)
+        return Results.NotFound(result.ErrorMessage);
+
+    return Results.Ok(result.Value);
+}).RequireAuthorization(policy => policy.RequireRole("Manager"));
 
 await app.Services.ApplyMigrations();
 
