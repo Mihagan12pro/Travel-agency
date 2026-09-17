@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using System.Text;
 using System.Text.Json;
+using Travel.Api.EndPoints;
 using Travel.Application;
 using Travel.Application.DTOs.Employee;
 using Travel.Application.DTOs.Tours.Aggreement.BTC;
@@ -99,75 +100,9 @@ app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
-app.MapPost("/auth/register", async (
-    [FromBody] SignUpDto register,
-    [FromServices] IAuthService service, 
-    HttpRequest request,
-    CancellationToken token) =>
-{
-    var result = await service.SignUpAsync(register, token);
-
-    switch(result.Value)
-    {
-        case 200:
-            return Results.Ok();
-
-        case 404:
-            return Results.NotFound(result.ErrorMessage);
-
-        case 409:
-            return Results.Conflict(result.ErrorMessage);
-
-        default:
-            return Results.InternalServerError(result.ErrorMessage);
-    }
-});
-
-
-app.MapPost("/auth/login", async (
-    [FromBody] LoginDto login,
-    [FromServices] IAuthService service,
-    HttpRequest request,
-    CancellationToken token) =>
-{
-    var result = await service.LoginAsync(login, token);
-
-    if (result.IsSuccess)
-        return Results.Ok(result.Value);
-
-    return Results.NotFound();
-});
-
-app.MapPost("/admin/employees/add", async (EmployeeDataDto data, [FromServices] IAdminService service, CancellationToken token) =>
-{
-
-    await service.AddEmployeeAsync(data, token);
-
-}).RequireAuthorization(policy => policy.RequireRole("Admin"));
-
-app.MapPost("staff/tours/btc/aggreements", async (CreateBTCAggrementDto data, [FromServices] IPrimaryAggreementsService service, CancellationToken token) =>
-{
-    var result = await service.CreateBTCAsync(data, token);
-
-    return Results.Ok(result);
-}).RequireAuthorization(policy => policy.RequireRole("Manager", "Agent"));
-
-app.MapGet("staff/tours/btc/aggreements/all", async ([FromServices] IPrimaryAggreementsService service, CancellationToken token) =>
-{
-    var result = await service.GetAllBTCAsync(token);
-
-    return Results.Ok(result);
-}).RequireAuthorization(policy => policy.RequireRole("Manager"));
-
-app.MapGet("staff/tours/btc/aggreements/{id}", async ([FromServices] IPrimaryAggreementsService service, long id, CancellationToken token) =>
-{
-    var result = await service.GetBTCAsync(id, token);
-
-    if (!result.IsSuccess)
-        return Results.NotFound(result.ErrorMessage);
-
-    return Results.Ok(result.Value);
-}).RequireAuthorization(policy => policy.RequireRole("Manager"));
+app.AddAuthEndPoints();
+app.AddAdminEndPoints();
+app.AddToursEndPoints();
 
 await app.Services.ApplyMigrations();
 

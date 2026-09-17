@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Travel.DataAccess\Travel.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EndPoints\" />
-  </ItemGroup>
-
 </Project>
