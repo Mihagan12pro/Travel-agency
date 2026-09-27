@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Travel.Api/Travel.Api.csproj" />
+  <Project Path="Travel.Application/Travel.Application.csproj" />
+  <Project Path="Travel.DataAccess/Travel.DataAccess.csproj" Id="20f4db36-5d4e-41fd-a92f-ac3e5101864c" />
+  <Project Path="Travel.Model/Travel.Model.csproj" />
+</Solution>
